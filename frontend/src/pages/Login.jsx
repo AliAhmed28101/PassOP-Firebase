@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuthStore } from "../store/authStore";
+
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+
+import { signInWithPopup } from "firebase/auth";
+import { googleProvider, facebookProvider } from "../firebase";
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -30,6 +37,67 @@ const Login = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "Anonymous",
+          email: user.email,
+          uid: user.uid,
+          createdAt: new Date(),
+          provider: "google",
+        });
+      }
+
+      toast.success("Logged in with Google", { theme: "dark" });
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+    }
+  };
+
+
+  
+
+const handleFacebookLogin = async () => {
+  try {
+    const result = await signInWithPopup(auth, facebookProvider);
+    const user = result.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    // Create Firestore profile only on first login
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        username: user.displayName || "Facebook User",
+        email: user.email,
+        uid: user.uid,
+        provider: "facebook",
+        createdAt: new Date(),
+      });
+    }
+
+    toast.success("Logged in with Facebook", { theme: "dark" });
+    navigate("/"); // protected homepage
+
+  } catch (err) {
+    toast.error(err.message, { theme: "dark" });
+    console.error(err);
+  }
+};
+
+
+
+
 
   const showPassword = () => {
     const input = passwordRef.current;
@@ -129,6 +197,20 @@ const Login = () => {
           className="bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-500 transition hover:cursor-pointer"
         >
           Login
+        </button>
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="border border-gray-300 bg-gray-300 py-2 rounded-md hover:bg-gray-400 transition hover:cursor-pointer hover:font-semibold"
+        >
+          Continue with Google
+        </button>
+
+        <button
+          onClick={handleFacebookLogin}
+          className="bg-blue-600 text-white py-2 rounded-md hover:cursor-pointer hover:font-semibold"
+        >
+          Continue with Facebook
         </button>
         <p
           onClick={() => navigate("/signup")}

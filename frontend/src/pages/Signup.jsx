@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase.js";
-import { setDoc, doc } from "firebase/firestore"; 
+import { auth, db, googleProvider, facebookProvider } from "../firebase.js";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useAuthStore } from "../store/authStore.js";
+
+import { signInWithPopup } from "firebase/auth";
+import { toast } from "react-toastify";
+
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +22,7 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  
+
   const ref = useRef()
   const passwordRef = useRef()
 
@@ -37,6 +42,63 @@ const Signup = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      //  Create Firestore profile only on first signup
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "Anonymous",
+          email: user.email,
+          uid: user.uid,
+          createdAt: new Date(),
+          provider: "google",
+        });
+      }
+
+      toast.success("Signed up with Google", { theme: "dark" });
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+    }
+  };
+
+
+  const handleFacebookSignUp = async () => {
+  try {
+    const result = await signInWithPopup(auth, facebookProvider);
+    const user = result.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    // Create Firestore profile only on first login
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        username: user.displayName || "Facebook User",
+        email: user.email,
+        uid: user.uid,
+        provider: "facebook",
+        createdAt: new Date(),
+      });
+    }
+
+    toast.success("Logged in with Facebook", { theme: "dark" });
+    navigate("/"); // protected homepage
+
+  } catch (err) {
+    toast.error(err.message, { theme: "dark" });
+    console.error(err);
+  }
+};
+
+
 
 
 
@@ -71,9 +133,9 @@ const Signup = () => {
         email: formData.email,
         uid: newUser.uid,
         createdAt: new Date()
-      
+
       }
-    )
+      )
       console.log("User and firestore profile created successfully")
 
     } catch (err) {
@@ -132,16 +194,31 @@ const Signup = () => {
         >
           Sign Up
         </button>
+        <button
+          type="button"
+          onClick={handleGoogleSignup}
+          className="border border-gray-300 bg-gray-300 py-2 rounded-md flex items-center justify-center gap-2 hover:bg-gray-400 hover:cursor-pointer hover:font-semibold"
+        >
+          Continue with Google
+        </button>
 
-         <p
+         <button
+          onClick={handleFacebookSignUp}
+          className="bg-blue-600 text-white py-2 rounded-md hover:cursor-pointer hover:font-semibold"
+        >
+          Continue with Facebook
+        </button>
+
+
+        <p
           onClick={() => navigate("/login")}
           className="text-sm text-blue-600 cursor-pointer text-center"
         >
           ALready have an account? Login!
-        </p>  
+        </p>
       </form>
 
-      
+
     </div>
   );
 };
