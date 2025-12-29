@@ -7,7 +7,6 @@ import { useAuthStore } from "./store/authStore";
 import './App.css'
 
 import Navbar from './components/Navbar'
-import Footer from './components/Footer'
 
 
 
@@ -68,7 +67,7 @@ function App() {
       
        
     
-    <Footer/>
+    {/* <Footer/> */}
  
     
     </>

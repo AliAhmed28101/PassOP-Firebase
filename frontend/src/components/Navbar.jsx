@@ -50,12 +50,9 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-4">
-          <button className="flex items-center justify-center gap-2 cursor-pointer ring-white ring-1 bg-green-600 rounded-3xl px-2 hover:bg-green-500">
-            <span className="invert w-12">
-              <img className="p-1" src="/github.svg" alt="Github" />
-            </span>
-            <span className="font-bold">Github</span>
-          </button>
+          <p className="flex items-center justify-center gap-2 font-semibold ring-white ring-1 bg-green-700 rounded-4xl px-2 py-2">
+            Your Trust is Our Priority!
+          </p>
 
           {user && location.pathname === "/" && (
             <button
