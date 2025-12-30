@@ -8,11 +8,10 @@ import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 
 import { signInWithPopup } from "firebase/auth";
-import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 
 import { googleProvider, facebookProvider, twitterProvider, GithubProvider } from "../firebase";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
@@ -23,7 +22,7 @@ const Login = () => {
     password: "",
   });
 
-  
+
 
   const user = useAuthStore((state) => state.user);
   const setError = useAuthStore((state) => state.setError);
@@ -71,105 +70,108 @@ const Login = () => {
   };
 
 
-  
 
-const handleFacebookLogin = async () => {
-  try {
-    const result = await signInWithPopup(auth, facebookProvider);
-    const user = result.user;
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+  const handleFacebookLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
 
-    // Create Firestore profile only on first login
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "Facebook User",
-        email: user.email,
-        uid: user.uid,
-        provider: "facebook",
-        createdAt: new Date(),
-      });
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // Create Firestore profile only on first login
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "Facebook User",
+          email: user.email,
+          uid: user.uid,
+          provider: "facebook",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Logged in with Facebook", { theme: "dark" });
+      navigate("/"); // protected homepage
+
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+      console.error(err);
     }
-
-    toast.success("Logged in with Facebook", { theme: "dark" });
-    navigate("/"); // protected homepage
-
-  } catch (err) {
-    toast.error(err.message, { theme: "dark" });
-    console.error(err);
-  }
-};
+  };
 
 
 
 
 
-const handleTwitterLogin = async () => {
-  try {
-    
-    const result = await signInWithPopup(auth, twitterProvider);
-    
- 
-    const user = result.user;
+  const handleTwitterLogin = async () => {
+    try {
 
-    console.log(user)
+      const result = await signInWithPopup(auth, twitterProvider);
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
 
-    // Create Firestore profile only on first login
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "X User",
-        email: user.email,
-        uid: user.uid,
-        provider: "X",
-        createdAt: new Date(),
-      });
+      const user = result.user;
+
+      console.log(user)
+      //check for is user is verified in X or not
+
+
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // Create Firestore profile only on first login
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "X User",
+          email: user.email,
+          uid: user.uid,
+          provider: "X",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Logged in with X", { theme: "dark" });
+      navigate("/"); // protected homepage
+
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+      console.error(err);
     }
-
-    toast.success("Logged in with X", { theme: "dark" });
-    navigate("/"); // protected homepage
-
-  } catch (err) {
-    toast.error(err.message, { theme: "dark" });
-    console.error(err);
-  }
-};
+  };
 
 
 
-const handleGithubLogin = async () => {
-  try {
-    
-    const result = await signInWithPopup(auth, GithubProvider);
-    
-   
-    const user = result.user;
+  const handleGithubLogin = async () => {
+    try {
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+      const result = await signInWithPopup(auth, GithubProvider);
 
-    // Create Firestore profile only on first login
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "Github User",
-        email: user.email,
-        uid: user.uid,
-        provider: "Github",
-        createdAt: new Date(),
-      });
+
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // Create Firestore profile only on first login
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "Github User",
+          email: user.email,
+          uid: user.uid,
+          provider: "Github",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Logged in with Github", { theme: "dark" });
+      navigate("/"); // protected homepage
+
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+      console.error(err);
     }
-
-    toast.success("Logged in with Github", { theme: "dark" });
-    navigate("/"); // protected homepage
-
-  } catch (err) {
-    toast.error(err.message, { theme: "dark" });
-    console.error(err);
-  }
-};
+  };
 
 
 
@@ -212,8 +214,8 @@ const handleGithubLogin = async () => {
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
-      {/* Toast Container */}
-      <ToastContainer
+      
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -224,7 +226,7 @@ const handleGithubLogin = async () => {
         draggable
         pauseOnHover
         theme="dark"
-      />
+      /> */}
 
       <form
         onSubmit={handleSubmit}
@@ -288,7 +290,7 @@ const handleGithubLogin = async () => {
           Continue with Facebook
         </button>
 
-         <button
+        <button
           onClick={handleTwitterLogin}
           className="bg-gray-600 text-white py-2 rounded-md hover:cursor-pointer hover:font-semibold hover:bg-gray-700"
         >
@@ -296,7 +298,7 @@ const handleGithubLogin = async () => {
         </button>
 
 
-          <button
+        <button
 
           onClick={handleGithubLogin}
           className="bg-gray-800 text-white py-2 rounded-md hover:cursor-pointer hover:font-semibold hover:bg-gray-900"

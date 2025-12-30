@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth, db, googleProvider, facebookProvider, twitterProvider, GithubProvider } from "../firebase.js";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useAuthStore } from "../store/authStore.js";
 
 import { signInWithPopup } from "firebase/auth";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 
@@ -16,6 +18,7 @@ const Signup = () => {
     email: "",
     password: "",
   });
+
 
   const user = useAuthStore((state) => state.user);
   const setError = useAuthStore((state) => state.setError);
@@ -71,102 +74,104 @@ const Signup = () => {
 
 
   const handleFacebookSignUp = async () => {
-  try {
-    const result = await signInWithPopup(auth, facebookProvider);
-    const user = result.user;
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
 
-    // Create Firestore profile only on first login
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "Facebook User",
-        email: user.email,
-        uid: user.uid,
-        provider: "facebook",
-        createdAt: new Date(),
-      });
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // Create Firestore profile only on first login
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "Facebook User",
+          email: user.email,
+          uid: user.uid,
+          provider: "facebook",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Signed Up with Facebook", { theme: "dark" });
+      navigate("/"); // protected homepage
+
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+      console.error(err);
+    }
+  };
+
+
+
+  const handleTwitterLogin = async () => {
+    try {
+
+      const result = await signInWithPopup(auth, twitterProvider);
+
+
+      const user = result.user;
+
+
+
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // Create Firestore profile only on first login
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "X User",
+          email: user.email,
+          uid: user.uid,
+          provider: "X",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Signed up with X", { theme: "dark" });
+      navigate("/"); // protected homepage
+
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+      console.error(err);
+    }
+  };
+
+
+
+
+  const handleGithubLogin = async () => {
+    try {
+
+      const result = await signInWithPopup(auth, GithubProvider);
+
+
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // Create Firestore profile only on first login
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: user.displayName || "Github User",
+          email: user.email,
+          uid: user.uid,
+          provider: "Github",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Signed up with Github", { theme: "dark" });
+      navigate("/"); // protected homepage
+
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+      console.error(err);
     }
 
-    toast.success("Signed Up with Facebook", { theme: "dark" });
-    navigate("/"); // protected homepage
-
-  } catch (err) {
-    toast.error(err.message, { theme: "dark" });
-    console.error(err);
-  }
-};
-
-
-
-const handleTwitterLogin = async () => {
-  try {
-    
-    const result = await signInWithPopup(auth, twitterProvider);
-    
- 
-    const user = result.user;
-
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    // Create Firestore profile only on first login
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "X User",
-        email: user.email,
-        uid: user.uid,
-        provider: "X",
-        createdAt: new Date(),
-      });
-    }
-
-    toast.success("Signed up with X", { theme: "dark" });
-    navigate("/"); // protected homepage
-
-  } catch (err) {
-    toast.error(err.message, { theme: "dark" });
-    console.error(err);
-  }
-};
-
-
-
-const handleGithubLogin = async () => {
-  try {
-    
-    const result = await signInWithPopup(auth, GithubProvider);
-    
-   
-    const user = result.user;
-
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    // Create Firestore profile only on first login
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "Github User",
-        email: user.email,
-        uid: user.uid,
-        provider: "Github",
-        createdAt: new Date(),
-      });
-    }
-
-    toast.success("Signed up with Github", { theme: "dark" });
-    navigate("/"); // protected homepage
-
-  } catch (err) {
-    toast.error(err.message, { theme: "dark" });
-    console.error(err);
-  }
-};
-
-
-
-
+  };
 
 
 
@@ -196,24 +201,53 @@ const handleGithubLogin = async () => {
 
       //for username collection and data saving in database 
       const newUser = userCredential.user
+
+      await sendEmailVerification(newUser);
+
       await setDoc(doc(db, "users", newUser.uid), {
         username: formData.username,
         email: formData.email,
         uid: newUser.uid,
+        emailVerified: false,
         createdAt: new Date()
-
       }
       )
+
+      navigate("/verify-email")
+
       console.log("User and firestore profile created successfully")
 
     } catch (err) {
       setError(err.message);
+      toast.error("Can't Sign you Up!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
       console.log(err);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+{/* 
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      /> */}
+
       <form
         onSubmit={handleSubmit}
         className="bg-white w-full max-w-sm p-6 rounded-lg shadow-md flex flex-col gap-4"
@@ -261,6 +295,7 @@ const handleGithubLogin = async () => {
           className="mt-2 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition hover:cursor-pointer"
         >
           Sign Up
+
         </button>
         <button
           type="button"
@@ -270,7 +305,7 @@ const handleGithubLogin = async () => {
           Continue with Google
         </button>
 
-         <button
+        <button
           onClick={handleFacebookSignUp}
           className="bg-blue-600 text-white py-2 rounded-md hover:cursor-pointer hover:font-semibold"
         >
@@ -285,7 +320,7 @@ const handleGithubLogin = async () => {
         </button>
 
 
-          <button
+        <button
 
           onClick={handleGithubLogin}
           className="bg-gray-800 text-white py-2 rounded-md hover:cursor-pointer hover:font-semibold hover:bg-gray-900"
@@ -298,6 +333,7 @@ const handleGithubLogin = async () => {
           className="text-sm text-blue-600 cursor-pointer text-center"
         >
           ALready have an account? Login!
+
         </p>
       </form>
 
