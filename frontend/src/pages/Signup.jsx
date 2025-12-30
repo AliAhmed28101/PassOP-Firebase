@@ -204,6 +204,10 @@ const Signup = () => {
 
       await sendEmailVerification(newUser);
 
+      // if(!newUser){
+      //   toast.error("Profile Already Exists!", { theme: "dark" });
+      // }
+
       await setDoc(doc(db, "users", newUser.uid), {
         username: formData.username,
         email: formData.email,
@@ -219,7 +223,7 @@ const Signup = () => {
 
     } catch (err) {
       setError(err.message);
-      toast.error("Can't Sign you Up!", {
+      toast.error("Profile Already Exists!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
