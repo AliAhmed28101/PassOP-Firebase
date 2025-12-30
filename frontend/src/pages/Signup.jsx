@@ -6,7 +6,7 @@ import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useAuthStore } from "../store/authStore.js";
 
 import { signInWithPopup } from "firebase/auth";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
@@ -234,7 +234,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-{/* 
+      {/* 
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -328,18 +328,20 @@ const Signup = () => {
           Continue with Github
 
         </button>
+
         <p
           onClick={() => navigate("/login")}
-          className="text-sm text-blue-600 cursor-pointer text-center"
+          className="text-sm text-blue-600 cursor-pointer text-center hover:font-semibold"
         >
-          ALready have an account? Login!
+          Already have an account? Login!
 
         </p>
-      </form>
 
+      </form>
 
     </div>
   );
+
 };
 
 export default Signup;

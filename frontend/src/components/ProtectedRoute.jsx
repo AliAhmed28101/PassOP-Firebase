@@ -6,15 +6,14 @@ const ProtectedRoute = ({ children }) => {
 
   if (isLoading) return <div>Loading...</div>;
 
-  // Not logged in
   if (!user) return <Navigate to="/login" replace />;
 
-  // Logged in but not verified
-  if (!user.emailVerified) {
+  // Only enforce email verification for email/password users
+  if (user.providerData.some(p => p.providerId === "password") && !user.emailVerified) {
     return <Navigate to="/verify-email" replace />;
   }
 
-  // Fully authenticated + verified
+  // Fully authenticated or OAuth user
   return children;
 };
 

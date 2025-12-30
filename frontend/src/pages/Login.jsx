@@ -4,8 +4,10 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuthStore } from "../store/authStore";
 
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc} from "firebase/firestore";
 import { db } from "../firebase";
+
+
 
 import { signInWithPopup } from "firebase/auth";
 
@@ -189,17 +191,26 @@ const Login = () => {
     }
   };
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       // Firebase login
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+       await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      toast.success("Logged in successfully!", { theme: "dark" });
+
+      // proceed with navigation / state update here
+
     } catch (err) {
-      // Set error in Zustand store
       setError(err.message);
 
-      // Show toast notification
       toast.error("Invalid Credentials!", {
         position: "top-right",
         autoClose: 5000,
@@ -212,9 +223,10 @@ const Login = () => {
     }
   };
 
+
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
-      
+
       {/* <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -311,7 +323,7 @@ const Login = () => {
 
         <p
           onClick={() => navigate("/signup")}
-          className="text-sm text-blue-600 cursor-pointer text-center"
+          className="text-sm text-blue-600 cursor-pointer text-center hover:fontse"
         >
           Don't have an account? Sign Up!
         </p>
