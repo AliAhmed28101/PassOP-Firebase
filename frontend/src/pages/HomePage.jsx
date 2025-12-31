@@ -4,6 +4,9 @@ import { useEffect } from 'react'
 
 import { ToastContainer, toast } from 'react-toastify';
 
+import { useAuthStore } from "../store/authStore";
+
+
 import 'react-toastify/dist/ReactToastify.css';
 
 import axios from "axios";
@@ -18,9 +21,13 @@ const HomePage = () => {
 
     const [passwordArray, setpasswordArray] = useState([])
 
+    const user = useAuthStore((state) => state.user);
+
     const getPasswords = async () => {
+        if (!user) return;
+
         try {
-            const res = await axios.get("http://localhost:3000/");
+            const res = await axios.get(`http://localhost:3000/?uid=${user.uid}`);
             setpasswordArray(res.data.data);
         } catch (error) {
             console.log("Error fetching passwords", error);
@@ -30,7 +37,7 @@ const HomePage = () => {
     useEffect(() => {
         getPasswords()
 
-    }, [])
+    }, [user])
 
 
 
@@ -75,9 +82,12 @@ const HomePage = () => {
             try {
                 let res;
 
-                // If editing
+                const payload = { ...form, uid: user.uid }; // add UID here
+
+
+                // If editing (updating)
                 if (form.id) {
-                    res = await axios.put(`http://localhost:3000/update/${form.id}`, form);
+                    res = await axios.put(`http://localhost:3000/update/${form.id}`, payload);
 
                     // Replace updated password in UI
                     const updatedArray = passwordArray.map(item =>
@@ -90,7 +100,7 @@ const HomePage = () => {
 
                 // If adding new
                 else {
-                    res = await axios.post("http://localhost:3000/save", form);
+                    res = await axios.post("http://localhost:3000/save", payload);
                     setpasswordArray([...passwordArray, res.data.result]);
                     toast("Password Saved!", { theme: "dark" });
                 }
@@ -106,6 +116,13 @@ const HomePage = () => {
             toast('Minimum Length Required is 3!', { theme: "dark" });
         }
     };
+
+
+    const editPassword = (id) => {
+        const selected = passwordArray.find(item => item.id === id);
+        setform(selected);
+    };
+
 
 
 
@@ -130,11 +147,6 @@ const HomePage = () => {
     };
 
 
-
-    const editPassword = (id) => {
-        const selected = passwordArray.find(item => item.id === id);
-        setform(selected);
-    };
 
 
 

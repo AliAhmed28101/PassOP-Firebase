@@ -30,8 +30,6 @@ function App() {
 
 
 
-
-
   useEffect(() => {
 
     const unsubsribe = onAuthStateChanged(auth, (user) => {
@@ -86,8 +84,6 @@ function App() {
 
 
       </div>
-
-
 
 
       {/* <Footer/> */}

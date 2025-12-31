@@ -38,39 +38,51 @@ app.use(cors({
 
 
 app.get('/', async (req, res) => {
-
   try {
-    const Passwords = await db.collection("passwords").get();
+    const userUid = req.query.uid; // pass UID from frontend as query param
 
-    const data = Passwords.docs.map(item => ({
-      id: item.id,
-      ...item.data()
+    if (!userUid) {
+      return res.status(400).json({ success: false, message: "User UID is required" });
+    }
 
+    const snapshot = await db.collection("passwords").where("uid", "==", userUid).get();
+
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
     }));
-    res.json({ success: true, data: data });
+
+    res.json({ success: true, data });
 
   } catch (err) {
-
-    res.status(500).json({ success: false, message: "Error getting passwords" })
-
+    res.status(500).json({ success: false, message: "Error getting passwords" });
+    console.log(err);
   }
-})
+});
+
+
 
 // Save a password
 app.post('/save', async (req, res) => {
   try {
+    
+    const { site, username, password, uid } = req.body;
 
-    const doc = await db.collection("passwords").add(req.body);
+    const doc = await db.collection("passwords").add({ 
+      site, username, password, uid, createdAt: new Date()
+    });
 
 
     console.log("Data of passwords", req.body)
-    res.json({ success: true, result:{id: doc.id, ...req.body} });
+    res.json({ success: true, result:{id: doc.id, site, username, password, uid} });
 
   } catch (err) {
     res.status(500).json({ success: false, message: "Error saving password", err });
     console.log(err)
   }
 });
+
+
 
 // Delete a password
 app.delete("/delete/:id", async (req, res) => {
