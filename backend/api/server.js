@@ -62,6 +62,7 @@ app.get('/', async (req, res) => {
 
 
 
+
 // Save a password
 app.post('/save', async (req, res) => {
   try {
@@ -70,8 +71,8 @@ app.post('/save', async (req, res) => {
 
     const doc = await db.collection("passwords").add({ 
       site, username, password, uid, createdAt: new Date()
-    });
 
+    });
 
     console.log("Data of passwords", req.body)
     res.json({ success: true, result:{id: doc.id, site, username, password, uid} });
@@ -80,7 +81,25 @@ app.post('/save', async (req, res) => {
     res.status(500).json({ success: false, message: "Error saving password", err });
     console.log(err)
   }
+
 });
+
+
+// update a password 
+
+app.put('/update/:id', async (req, res) => {
+  try {
+    const  id  = req.params.id
+    const  updatedData  = req.body
+
+    const updatedPassword = await db.collection("passwords").doc(id).update(updatedData)
+    res.json({ success: true, result: updatedData });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Error updating password" });
+    console.log(err)
+  }
+});
+
 
 
 
@@ -122,20 +141,6 @@ app.delete("/delete/:id", async (req, res) => {
 
 
 
-// update a password 
-
-app.put('/update/:id', async (req, res) => {
-  try {
-    const  id  = req.params.id
-    const  updatedData  = req.body
-
-    const updatedPassword = await db.collection("passwords").doc(id).update(updatedData)
-    res.json({ success: true, result: updatedData });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Error updating password" });
-    console.log(err)
-  }
-});
 
 
 // app.put('/update', async (req, res) => {

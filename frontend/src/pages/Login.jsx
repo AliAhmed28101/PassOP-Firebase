@@ -209,9 +209,32 @@ const Login = () => {
       // proceed with navigation / state update here
 
     } catch (err) {
-      setError(err.message);
 
-      toast.error("Invalid Credentials!", {
+      let message = "Something went wrong!";
+    switch (err.code) {
+      case "auth/invalid-credential":
+        message = "Invalid password!";
+        break;
+      case "auth/user-not-found":
+        message = "Email not registered!";
+        break;
+      case "auth/invalid-email":
+        message = "Invalid email format!";
+        break;
+      case "auth/user-disabled":
+        message = "Account disabled. Contact support.";
+        break;
+      case "auth/too-many-requests":
+        message = "Too many attempts. Try later.";
+        break;
+      default:
+        message = err.message;
+    }
+      // setError(message);
+
+      
+
+      toast.error("Invalid Credentials!", message , {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -323,7 +346,7 @@ const Login = () => {
 
         <p
           onClick={() => navigate("/signup")}
-          className="text-sm text-blue-600 cursor-pointer text-center hover:fontse"
+          className="text-sm text-blue-600 cursor-pointer text-center hover:font-semibold"
         >
           Don't have an account? Sign Up!
         </p>

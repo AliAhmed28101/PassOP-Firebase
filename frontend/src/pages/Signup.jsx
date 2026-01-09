@@ -202,11 +202,14 @@ const Signup = () => {
       //for username collection and data saving in database 
       const newUser = userCredential.user
 
-      await sendEmailVerification(newUser);
 
-      // if(!newUser){
-      //   toast.error("Profile Already Exists!", { theme: "dark" });
-      // }
+      if(!newUser){
+
+        toast.error("Profile Already Exists!", { theme: "dark" });
+        return;
+      }
+
+      await sendEmailVerification(newUser);
 
       await setDoc(doc(db, "users", newUser.uid), {
         username: formData.username,
@@ -223,7 +226,7 @@ const Signup = () => {
 
     } catch (err) {
       setError(err.message);
-      toast.error("Profile Already Exists!", {
+      toast.error("Error Doing the Operation!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

@@ -13,8 +13,6 @@ import axios from "axios";
 
 
 
-
-
 const HomePage = () => {
 
     const [form, setform] = useState({ site: "", username: "", password: "" })
@@ -22,6 +20,7 @@ const HomePage = () => {
     const [passwordArray, setpasswordArray] = useState([])
 
     const user = useAuthStore((state) => state.user);
+
 
     const getPasswords = async () => {
         if (!user) return;

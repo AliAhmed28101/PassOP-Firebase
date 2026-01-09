@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { auth } from "../firebase";
-import { toast, ToastContainer} from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import {doc, updateDoc} from "firebase/firestore";
-import {db} from "../firebase.js";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase.js";
+import { getIdToken, sendEmailVerification } from "firebase/auth";
+
 
 
 
@@ -15,25 +17,39 @@ const VerifyEmail = () => {
   const handleCheckVerification = async () => {
     setLoading(true);
     try {
+      const user = auth.currentUser;
+
       // Reload user to get latest emailVerified status
-      await auth.currentUser.reload();
+      await user.reload();
+
+
 
       //  Check verification
-      if (auth.currentUser.emailVerified) {
-        //setting the emailverified: true if email is verified by the user!
+      if (!user.emailVerified) {
 
-        await updateDoc(doc(db, "users", auth.currentUser.uid), {
-          emailVerified: true,
-        });
-        toast.success("Email verified! Redirecting...", { theme: "dark" });
-        //redirecting to homepage
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      } else {
         toast.info("Email not verified yet. Please check your inbox.", { theme: "dark" });
+        return;
       }
-    } catch (err) {
+      // setting the emailverified: true if email is verified by the user!
+      console.log(auth.currentUser)
+
+      //to hard refresh firebase token so it can receive true value instead of false for emailverification
+      await getIdToken(user, true);
+
+      await updateDoc(doc(db, "users", user.uid), {
+        emailVerified: true,
+      });
+
+      toast.success("Email verified! Redirecting...", { theme: "dark" });
+      //redirecting to homepage
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    }
+
+
+    catch (err) {
+      console.log(err)
       toast.error(err.message, { theme: "dark" });
     } finally {
       setLoading(false);
@@ -43,10 +59,12 @@ const VerifyEmail = () => {
   const handleResend = async () => {
     setLoading(true);
     try {
-      await auth.currentUser.sendEmailVerification();
+      await sendEmailVerification(auth.currentUser);
       toast.success("Verification email resent!", { theme: "dark" });
     } catch (err) {
-      toast.info("Verification Email is Already Sent! Please Sign up again to receive new email", {
+
+      console.log(err)
+      toast.info("Can't send the verification email, try after some minutes", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
