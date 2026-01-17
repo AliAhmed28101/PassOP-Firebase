@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuthStore } from "../store/authStore";
+import { signInAnonymously } from "firebase/auth";
 
-import { doc, setDoc, getDoc} from "firebase/firestore";
+
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 
@@ -191,6 +193,30 @@ const Login = () => {
     }
   };
 
+  const handleGuestLogin = async () => {
+    try {
+      const result = await signInAnonymously(auth);
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+
+      // Create Firestore profile if first time
+      if (!snap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          isAnonymous: true,
+          provider: "anonymous",
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("You are browsing as a guest", { theme: "dark" });
+      navigate("/");
+    } catch (err) {
+      toast.error(err.message, { theme: "dark" });
+    }
+  };
 
 
   const handleSubmit = async (e) => {
@@ -198,7 +224,7 @@ const Login = () => {
 
     try {
       // Firebase login
-       await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
@@ -211,30 +237,30 @@ const Login = () => {
     } catch (err) {
 
       let message = "Something went wrong!";
-    switch (err.code) {
-      case "auth/invalid-credential":
-        message = "Invalid password!";
-        break;
-      case "auth/user-not-found":
-        message = "Email not registered!";
-        break;
-      case "auth/invalid-email":
-        message = "Invalid email format!";
-        break;
-      case "auth/user-disabled":
-        message = "Account disabled. Contact support.";
-        break;
-      case "auth/too-many-requests":
-        message = "Too many attempts. Try later.";
-        break;
-      default:
-        message = err.message;
-    }
-      // setError(message);
+      switch (err.code) {
+        case "auth/invalid-credential":
+          message = "Invalid password!";
+          break;
+        case "auth/user-not-found":
+          message = "Email not registered!";
+          break;
+        case "auth/invalid-email":
+          message = "Invalid email format!";
+          break;
+        case "auth/user-disabled":
+          message = "Account disabled. Contact support.";
+          break;
+        case "auth/too-many-requests":
+          message = "Too many attempts. Try later.";
+          break;
+        default:
+          message = err.message;
+      }
+      setError(message);
 
-      
 
-      toast.error("Invalid Credentials!", message , {
+
+      toast.error("Invalid Credentials!", message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -248,7 +274,7 @@ const Login = () => {
 
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
+    <div className="h-screen flex justify-center bg-gray-100">
 
       {/* <ToastContainer
         position="top-right"
@@ -342,7 +368,13 @@ const Login = () => {
 
         </button>
 
-
+        <button
+          type="button"
+          onClick={handleGuestLogin}
+          className="bg-purple-500 cursor-pointer text-white py-2 rounded-md hover:bg-purple-600 hover:font-semibold"
+        >
+          Continue as Guest
+        </button>
 
         <p
           onClick={() => navigate("/signup")}

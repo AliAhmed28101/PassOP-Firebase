@@ -16,6 +16,7 @@ import HomePage from './pages/HomePage.jsx'
 import Signup from "./pages/Signup.jsx"
 import Login from "./pages/Login.jsx"
 import ForgotPassword from "./pages/ForgotPassword.jsx"
+import Profile from "./pages/Profile.jsx"
 
 
 import { Routes, Route, BrowserRouter } from "react-router-dom"
@@ -78,6 +79,7 @@ function App() {
 
             <Route path="/verify-email" element={<VerifyEmail />} />
 
+            <Route path="/profile" element={<Profile />} />
 
           </Routes>
         </BrowserRouter>

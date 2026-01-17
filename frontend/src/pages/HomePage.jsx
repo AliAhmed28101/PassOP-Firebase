@@ -216,7 +216,7 @@ const HomePage = () => {
                     </div>
 
 
-                    <button onClick={savePassword} className='text-black flex justify-center items-center transition-all mx-auto bg-green-500 rounded-full cursor-pointer gap-2 px-6 py-2 w-fit hover:bg-green-400 hover:font-bold'>
+                    <button onClick={savePassword} className='text-black flex justify-center items-center transition-all mx-auto bg-green-600 rounded-full cursor-pointer gap-2 px-6 py-2 w-fit hover:bg-green-500 hover:font-semibold'>
 
                         <lord-icon
                             src="https://cdn.lordicon.com/gzqofmcx.json"

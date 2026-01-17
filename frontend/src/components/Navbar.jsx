@@ -14,45 +14,36 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const handleProfile = () => {
+    navigate("/profile")
+  }
+
   return (
     <nav className="bg-slate-800 text-white">
+
       <div className="flex justify-around items-center px-4 py-4 mycontainer">
-        
+
         <div className="logo font-bold text-2xl">
           <span className="text-green-500">&lt;</span>
           Pass
           <span className="text-green-500">OP/&gt;</span>
         </div>
 
-        <ul>
-          <li className="flex gap-6">
-            <Link
-              to="/"
-              className="hover:font-bold hover:text-green-500 transition-all"
-            >
-              Home
-            </Link>
 
-            <Link
-              to="#"
-              className="hover:font-bold hover:text-green-500 transition-all"
-            >
-              About
-            </Link>
 
-            <Link
-              to="#"
-              className="hover:font-bold hover:text-green-500 transition-all"
-            >
-              Contact
-            </Link>
-          </li>
-        </ul>
+        <div className="flex items-center gap-4 justify-center">
 
-        <div className="flex items-center gap-4">
-          <p className="flex items-center justify-center gap-2 font-semibold ring-white ring-1 bg-green-700 rounded-4xl px-2 py-2">
+          {!user && (<p className="flex items-center justify-center gap-2 font-semibold ring-white ring-1 bg-green-700 rounded-4xl px-2 py-2">
             Your Trust is Our Priority!
-          </p>
+          </p>)}
+
+
+
+          {user && location.pathname === "/" && (
+            <button onClick={handleProfile} className="font-bold cursor-pointer ring-white ring-1 bg-green-700 rounded-3xl px-4 py-3 hover:bg-green-600">
+              Profile
+            </button>
+          )}
 
           {user && location.pathname === "/" && (
             <button
