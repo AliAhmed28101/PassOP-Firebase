@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+
+import { deleteUser } from "firebase/auth";
+import { deleteDoc } from "firebase/firestore";
+import { auth } from "../firebase";
 import { db } from "../firebase";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "react-toastify";
@@ -62,6 +66,38 @@ const Profile = () => {
       toast.success("Username updated");
     } catch (err) {
       toast.error("Failed to update username");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirm = window.confirm(
+      "This will permanently delete your account and all data. This cannot be undone. Continue?"
+    );
+
+    if (!confirm) return;
+
+    try {
+      const uid = user.uid;
+
+      // 1. Delete Firestore profile
+      await deleteDoc(doc(db, "users", uid));
+
+      // 2. Delete Auth account
+      await deleteUser(auth.currentUser);
+
+      // 3. Clear local auth state
+      useAuthStore.getState().logout();
+
+      toast.success("Account deleted");
+      navigate("/signup");
+    } catch (error) {
+      console.error(error);
+
+      if (error.code === "auth/requires-recent-login") {
+        toast.error("Please re-login before deleting your account.");
+      } else {
+        toast.error("Failed to delete account");
+      }
     }
   };
 
@@ -155,8 +191,15 @@ const Profile = () => {
         >
           Back to Homepage
         </button>
+
+        <button
+          onClick={handleDeleteAccount}
+          className="mt-3 w-full bg-red-600 cursor-pointer text-white py-2 rounded-md hover:bg-red-700"
+        >
+          Delete Account
+        </button>
       </div>
-    </div>
+    </div>  
   );
 };
 
