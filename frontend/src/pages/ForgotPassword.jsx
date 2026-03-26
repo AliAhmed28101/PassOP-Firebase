@@ -30,32 +30,38 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
-      <ToastContainer />
+    <div className="min-h-screen w-full flex justify-center items-center bg-gray-100 px-4">
 
-      <form
-        onSubmit={handleReset}
-        className="bg-white p-8 rounded-lg shadow-md w-80 flex flex-col gap-4"
-      >
-        <h2 className="text-xl font-semibold text-center">Forgot Password</h2>
+      <div className="w-full max-w-[1550px] flex justify-center items-center">
+        <ToastContainer />
 
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border rounded-md px-3 py-2"
-          required 
+        <form
+          onSubmit={handleReset}
+          className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md flex flex-col gap-4"
+        >
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center">
+            Forgot Password
+          </h2>
+
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border rounded-md px-3 py-2 text-sm sm:text-base"
+            required
           />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-green-600 text-white py-2 rounded-md hover:bg-green-500 transition"
-        >
-          {loading ? "Sending..." : "Send Reset Email"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-green-600 text-white py-2 sm:py-2.5 rounded-md hover:bg-green-500 transition text-sm sm:text-base"
+          >
+            {loading ? "Sending..." : "Send Reset Email"}
+          </button>
+        </form>
+      </div>
+
     </div>
   );
 };
