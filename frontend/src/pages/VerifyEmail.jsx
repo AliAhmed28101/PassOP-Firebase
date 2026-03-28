@@ -111,7 +111,7 @@ const VerifyEmail = () => {
           )}
 
           <p className="text-xs sm:text-sm text-gray-600 text-center">
-            A verification link has been sent to your email. Please verify to continue.
+            A verification link has been sent to your email. Please verify to continue. Check the spam folder if you don't see it in your inbox.
           </p>
 
           <button
