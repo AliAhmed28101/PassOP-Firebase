@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyparser = require('body-parser');
-const { db } = require('../db/firebase.js')
+const { db } = require('./db/firebase.js')
 
 dotenv.config();
 
@@ -13,11 +13,14 @@ const app = express();
 const port = 3000;
 
 
-app.use(bodyparser.json());
+
+
+app.use(express.json());
 
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://passopfbfe.vercel.app"
 ];
 
 
@@ -26,7 +29,7 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
-    }
+    }A
     return callback(new Error("CORS NOT ALLOWED"));
   },
   credentials: true
@@ -52,7 +55,7 @@ app.get('/', async (req, res) => {
       ...doc.data()
     }));
 
-    res.json({ success: true, data });
+    res.json({ success: true, data , message: "Hello World" });
 
   } catch (err) {
     res.status(500).json({ success: false, message: "Error getting passwords" });
@@ -77,10 +80,15 @@ app.post('/save', async (req, res) => {
     console.log("Data of passwords", req.body)
     res.json({ success: true, result:{id: doc.id, site, username, password, uid} });
 
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Error saving password", err });
-    console.log(err)
-  }
+  } 
+  catch (err) {
+  console.log("FULL ERROR:", err);
+  res.status(500).json({ 
+    success: false, 
+    message: "Error saving password", 
+    error: err.message 
+  });
+}
 
 });
 
@@ -157,9 +165,11 @@ app.delete("/delete/:id", async (req, res) => {
 // });
 
 
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
 module.exports = app;
 
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+

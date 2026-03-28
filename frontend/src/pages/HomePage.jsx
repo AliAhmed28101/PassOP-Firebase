@@ -18,7 +18,7 @@ const HomePage = () => {
     const getPasswords = async () => {
         if (!user) return;
         try {
-            const res = await axios.get(`http://localhost:3000/?uid=${user.uid}`);
+            const res = await axios.get(`https://passopfbbe.vercel.app/?uid=${user.uid}`);
             setpasswordArray(res.data.data);
         } catch (error) {
             console.log("Error fetching passwords", error);
@@ -55,14 +55,14 @@ const HomePage = () => {
                 const payload = { ...form, uid: user.uid };
 
                 if (form.id) {
-                    res = await axios.put(`http://localhost:3000/update/${form.id}`, payload);
+                    res = await axios.put(`https://passopfbbe.vercel.app/update/${form.id}`, payload);
                     const updatedArray = passwordArray.map(item =>
                         item.id === form.id ? { id: form.id, ...res.data.result } : item
                     );
                     setpasswordArray(updatedArray);
                     toast("Password Updated!", { theme: "dark" });
                 } else {
-                    res = await axios.post("http://localhost:3000/save", payload);
+                    res = await axios.post("https://passopfbbe.vercel.app/save", payload);
                     setpasswordArray([...passwordArray, res.data.result]);
                     toast("Password Saved!", { theme: "dark" });
                 }
@@ -87,7 +87,7 @@ const HomePage = () => {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`http://localhost:3000/delete/${id}`);
+            await axios.delete(`https://passopfbbe.vercel.app/delete/${id}`);
             setpasswordArray(passwordArray.filter(item => item.id !== id));
             toast('Password Deleted', { theme: "dark" });
         } catch (error) {
