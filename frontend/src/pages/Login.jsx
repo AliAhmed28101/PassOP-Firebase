@@ -215,7 +215,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-center bg-gray-100 px-4">
+    <div className="min-h-screen w-full flex justify-center items-center bg-gray-100 px-4 font-serif ">
 
       <div className="w-full max-w-[1550px] flex justify-center items-center">
 
@@ -224,7 +224,7 @@ const Login = () => {
           className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md flex flex-col gap-3 sm:gap-4"
         >
 
-          <h2 className="text-xl sm:text-2xl font-semibold text-center mb-2">
+          <h2 className="text-xl sm:text-2xl text-center mb-2">
             Login
           </h2>
 
@@ -267,7 +267,7 @@ const Login = () => {
             Forgot Password?
           </p>
 
-          <button className="bg-green-600 text-white py-2 rounded-md text-sm sm:text-base font-semibold hover:bg-green-700">
+          <button className="bg-green-600 text-white py-2 rounded-md text-sm sm:text-base  hover:bg-green-700">
             Login
           </button>
 

@@ -185,7 +185,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-center bg-gray-100 px-4">
+    <div className="min-h-screen w-full flex justify-center items-center bg-gray-100 px-4 font-serif">
 
       <div className="w-full max-w-[1550px] flex justify-center items-center">
 
@@ -194,7 +194,7 @@ const Signup = () => {
           className="bg-white w-full max-w-xs sm:max-w-sm md:max-w-md p-5 sm:p-6 rounded-lg shadow-md flex flex-col gap-3 sm:gap-4"
         >
 
-          <h2 className="text-xl sm:text-2xl font-semibold text-center mb-2">
+          <h2 className="text-xl sm:text-2xl  text-center mb-2">
             Sign Up
           </h2>
 
@@ -240,7 +240,7 @@ const Signup = () => {
             </span>
           </div>
 
-          <button className="mt-2 bg-green-600 text-white py-2 rounded-md text-sm sm:text-base hover:bg-green-700">
+          <button className="mt-2 bg-green-600 text-white py-2 rounded-md text-sm sm:text-base hover:bg-green-700 ">
             Sign Up
           </button>
 
