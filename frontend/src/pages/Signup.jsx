@@ -240,37 +240,43 @@ const Signup = () => {
             </span>
           </div>
 
-          <button className="mt-2 bg-green-600 text-white py-2 rounded-md text-sm sm:text-base hover:bg-green-700 ">
+          <button className="mt-2 bg-green-600 text-white py-2 rounded-2xl text-sm sm:text-base hover:bg-green-700 ">
             Sign Up
           </button>
 
           <button
             type="button"
             onClick={handleGoogleSignup}
-            className="bg-gray-300 py-2 rounded-md text-sm sm:text-base hover:bg-gray-400"
+             className="bg-white-300 py-2 rounded-2xl text-sm sm:text-base hover:bg-gray-100 border border-gray-300 flex gap-2.5  justify-center-safe items-center"
           >
             Continue with Google
+            <img className="h-4.5 w-4.5 " src="google.svg" alt="" />
           </button>
 
           <button
             onClick={handleFacebookSignUp}
-            className="bg-blue-600 text-white py-2 rounded-md text-sm sm:text-base hover:bg-blue-700"
+            className="bg-blue-600 text-white py-2 rounded-2xl text-sm sm:text-base hover:bg-blue-700 flex gap-2 justify-center-safe items-center"
           >
             Continue with Facebook
-          </button>
+                        <img className="h-4.5 w-4.5 invert" src="facebook.svg" alt="" />
+
+                        </button>
 
           <button
             onClick={handleTwitterLogin}
-            className="bg-gray-600 text-white py-2 rounded-md text-sm sm:text-base hover:bg-gray-700"
+           className="bg-sky-400 text-white py-2 rounded-2xl gap-3 text-sm sm:text-base hover:bg-sky-500 flex justify-center-safe items-center "
           >
-            Continue with X
+            Continue with Twitter
+
+                                    <img className="h-4.5 w-4.5 invert" src="twitter.svg" alt="" />
           </button>
 
           <button
             onClick={handleGithubLogin}
-            className="bg-gray-800 text-white py-2 rounded-md text-sm sm:text-base hover:bg-gray-900"
+             className="bg-gray-800 text-white py-2 rounded-2xl text-sm sm:text-base flex items-center justify-center-safe gap-3 hover:bg-gray-900"
           >
             Continue with Github
+                                                <img className="h-4.5 w-4.5 invert" src="github.svg" alt="" />
           </button>
 
           <p
